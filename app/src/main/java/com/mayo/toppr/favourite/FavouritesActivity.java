@@ -1,4 +1,4 @@
-package com.mayo.toppr;
+package com.mayo.toppr.favourite;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,6 +12,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+
+import com.mayo.toppr.ItemClickSupport;
+import com.mayo.toppr.R;
+import com.mayo.toppr.Tag;
+import com.mayo.toppr.Toppr;
+import com.mayo.toppr.event.Event;
+import com.mayo.toppr.event.EventsAdapter;
 
 import java.util.ArrayList;
 

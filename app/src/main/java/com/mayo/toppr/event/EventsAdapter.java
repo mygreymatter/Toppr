@@ -1,4 +1,4 @@
-package com.mayo.toppr;
+package com.mayo.toppr.event;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.mayo.toppr.R;
+import com.mayo.toppr.Tag;
 
 import java.util.ArrayList;
 
@@ -22,7 +24,7 @@ import java.util.ArrayList;
  * @version 1.0
  */
 
-class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventVH> {
+public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventVH> {
     private static final String TAG = EventsAdapter.class.getName();
 
     private ArrayList<Event> events;
@@ -30,7 +32,7 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventVH> {
     private LayoutInflater inflater;
     private boolean isDisplayingFavourites;
 
-    EventsAdapter(boolean isDisplayingFavourites) {
+    public EventsAdapter(boolean isDisplayingFavourites) {
         this.isDisplayingFavourites = isDisplayingFavourites;
     }
 
@@ -93,7 +95,7 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventVH> {
         return events != null ? events.size() : 0;
     }
 
-    void setEvents(ArrayList<Event> events) {
+    public void setEvents(ArrayList<Event> events) {
         this.events = events;
         notifyDataSetChanged();
     }

@@ -19,6 +19,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.Response;
+import com.mayo.toppr.event.Event;
+import com.mayo.toppr.event.EventsAdapter;
+import com.mayo.toppr.favourite.FavouritesActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -175,11 +178,11 @@ public class MainActivity extends AppCompatActivity
         eventsList.setLayoutManager(new LinearLayoutManager(this));
         eventsList.setAdapter(mAdapter);
 
-        ItemClickSupport.addTo(eventsList).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+        /*ItemClickSupport.addTo(eventsList).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 Log.i(TAG, "Item Clicked!");
             }
-        });
+        });*/
     }
 }

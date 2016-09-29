@@ -1,4 +1,4 @@
-package com.mayo.toppr;
+package com.mayo.toppr.event;
 
 /**
  * Created by Mahayogi Lakshmipathi on 25/9/16.
