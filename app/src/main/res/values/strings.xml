@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">Toppr</string>
+    <string name="app_name">Toppr Events</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="favourites">Favourites</string>
+    <string name="statistics">Statistics</string>
+    <string name="fake_category">Competitive</string>
+    <string name="fake_challenge_name">Toppr Amazon Hackerearth Amazing Challenge</string>
+    <string name="downloading_events">Please wait. Downloading events..!</string>
+    <string name="you_have_no_favourite_events">You have no favourite events!</string>
 </resources>
