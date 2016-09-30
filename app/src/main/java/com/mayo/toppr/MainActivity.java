@@ -20,12 +20,16 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.mayo.toppr.event.Event;
+import com.mayo.toppr.event.EventDetailActivity;
 import com.mayo.toppr.event.EventsAdapter;
 import com.mayo.toppr.favourite.FavouritesActivity;
+import com.mayo.toppr.search.SearchActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -35,26 +39,20 @@ public class MainActivity extends AppCompatActivity
     private EventsAdapter mAdapter;
     private ProgressBar mProgress;
     private TextView mProgressStatus;
+    private ArrayList<Event> mEvents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mEvents = Toppr.getInstance().events;
+
         mProgress = (ProgressBar) findViewById(R.id.progressbar);
         mProgressStatus = (TextView) findViewById(R.id.progress_status);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -66,68 +64,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         setEventsList();
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_favourite) {
-            startActivity(new Intent(this, FavouritesActivity.class));
-        } else if (id == R.id.nav_statistics) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         Toppr.getInstance().getJSONObject(URL.GET_EVENTS,
                 new Response.Listener<JSONObject>() {
@@ -142,6 +78,73 @@ public class MainActivity extends AppCompatActivity
 
                     }
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_search:
+                startActivity(new Intent(this, SearchActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_favourite) {
+            startActivity(new Intent(this, FavouritesActivity.class));
+        } else if (id == R.id.nav_statistics) {
+            startActivity(new Intent(this, StatisticActivity.class));
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+//        item.setChecked(false);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
+        //return false to keep the menu item in the navigation bar unselected
+        return false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mAdapter.setEvents(mEvents);
     }
 
     private void parseResponse(JSONObject response) throws JSONException {
@@ -161,7 +164,7 @@ public class MainActivity extends AppCompatActivity
             event.description = website.getString(Tag.DESCRIPTION);
             event.experience = website.getString(Tag.EXPERIENCE);
 
-            Toppr.getInstance().events.add(event);
+            mEvents.add(event);
         }
 
         Log.i(TAG, "Events: " + Toppr.getInstance().events.size());
@@ -178,11 +181,15 @@ public class MainActivity extends AppCompatActivity
         eventsList.setLayoutManager(new LinearLayoutManager(this));
         eventsList.setAdapter(mAdapter);
 
-        /*ItemClickSupport.addTo(eventsList).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+        ItemClickSupport.addTo(eventsList).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 Log.i(TAG, "Item Clicked!");
+                Intent i = new Intent(MainActivity.this, EventDetailActivity.class);
+                i.putExtra(Tag.POSITION, position);
+
+                startActivity(i);
             }
-        });*/
+        });
     }
 }

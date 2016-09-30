@@ -76,11 +76,12 @@ public class FavouritesActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();
-
         LocalBroadcastManager.getInstance(this)
                 .unregisterReceiver(mReceiver);
+
+        super.onPause();
     }
+
 
     private void setToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

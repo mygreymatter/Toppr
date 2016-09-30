@@ -9,6 +9,7 @@ package com.mayo.toppr;
 
 public class Tag {
 
+    public static final String LOG = "toppr";
     public static final String WEBSITES = "websites";
     public static final String ID = "id";
     public static final String NAME = "name";
@@ -17,6 +18,7 @@ public class Tag {
     public static final String DESCRIPTION = "description";
     public static final String EXPERIENCE = "experience";
     public static final String ACTION_UPDATE_FAVOURITES = "update_favourites";
+    public static final String POSITION = "position";
 
     private Tag() {
 
