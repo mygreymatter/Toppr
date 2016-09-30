@@ -11,4 +11,6 @@
     <string name="fake_challenge_name">Toppr Amazon Hackerearth Amazing Challenge</string>
     <string name="downloading_events">Please wait. Downloading events..!</string>
     <string name="you_have_no_favourite_events">You have no favourite events!</string>
+    <string name="search_hint">Search for challenges</string>
+    <string name="action_search">search</string>
 </resources>
