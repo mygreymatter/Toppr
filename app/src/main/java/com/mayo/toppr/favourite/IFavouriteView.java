@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * @version 1.0
  */
 
-interface FavouriteView {
+interface IFavouriteView {
     void showEventDetails(String id);
 
     void setFavouriteStatus(boolean isFavouritesEmpty);

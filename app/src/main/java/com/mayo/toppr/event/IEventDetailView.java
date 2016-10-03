@@ -7,7 +7,7 @@ package com.mayo.toppr.event;
  * @version 1.0
  */
 
-interface EventDetailView {
+interface IEventDetailView {
     void setEventTitle(String title);
 
     void setEventCategory(String category);

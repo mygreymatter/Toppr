@@ -13,7 +13,7 @@ import com.mayo.toppr.R;
 import com.mayo.toppr.Tag;
 
 public class EventDetailActivity extends AppCompatActivity
-        implements EventDetailView {
+        implements IEventDetailView {
 
     private ImageView mEventImage;
     private TextView mEventCategory;

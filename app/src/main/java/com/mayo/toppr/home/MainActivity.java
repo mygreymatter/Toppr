@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        MainView {
+        IMainView {
 
     private EventsAdapter mAdapter;
     private ProgressBar mProgress;

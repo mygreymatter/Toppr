@@ -10,11 +10,11 @@ import com.mayo.toppr.models.Event;
  */
 
 class EventDetailPresenter {
-    private EventDetailView mEventDetailView;
+    private IEventDetailView mEventDetailView;
     private EventDetailModel mEventDetailModel;
     private Event event;
 
-    EventDetailPresenter(EventDetailView view) {
+    EventDetailPresenter(IEventDetailView view) {
         mEventDetailView = view;
         mEventDetailModel = new EventDetailModel();
     }

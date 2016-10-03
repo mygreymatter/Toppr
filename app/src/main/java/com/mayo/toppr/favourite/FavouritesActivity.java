@@ -22,7 +22,7 @@ import com.mayo.toppr.models.Event;
 import java.util.ArrayList;
 
 public class FavouritesActivity extends AppCompatActivity
-        implements FavouriteView {
+        implements IFavouriteView {
 
     private FavouritePresenter mFavouritePresenter;
 

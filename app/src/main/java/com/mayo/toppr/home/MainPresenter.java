@@ -12,10 +12,10 @@ import java.util.ArrayList;
  */
 
 class MainPresenter implements MainModel.onModelListener {
-    private MainView mMainView;
+    private IMainView mMainView;
     private MainModel mMainModel;
 
-    MainPresenter(MainView view) {
+    MainPresenter(IMainView view) {
         mMainView = view;
         mMainModel = new MainModel(this);
         mMainView.showProgress();

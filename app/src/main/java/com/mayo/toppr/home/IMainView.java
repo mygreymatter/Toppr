@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * @version 1.0
  */
 
-interface MainView {
+interface IMainView {
     void showProgress();
 
     void stopProgress();

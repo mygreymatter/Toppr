@@ -13,10 +13,10 @@ import java.util.ArrayList;
 
 class FavouritePresenter implements FavouriteModel.OnFavouriteModelListener {
 
-    private FavouriteView mFavouriteView;
+    private IFavouriteView mFavouriteView;
     private FavouriteModel mFavouriteModel;
 
-    FavouritePresenter(FavouriteView favouriteView) {
+    FavouritePresenter(IFavouriteView favouriteView) {
         mFavouriteView = favouriteView;
         mFavouriteModel = new FavouriteModel(this);
     }
