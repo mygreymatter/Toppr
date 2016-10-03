@@ -13,28 +13,27 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
-import com.mayo.toppr.ItemClickSupport;
 import com.mayo.toppr.R;
 import com.mayo.toppr.Tag;
-import com.mayo.toppr.Toppr;
-import com.mayo.toppr.event.Event;
-import com.mayo.toppr.event.EventsAdapter;
+import com.mayo.toppr.customview.ItemClickSupport;
+import com.mayo.toppr.event.EventDetailActivity;
+import com.mayo.toppr.models.Event;
 
 import java.util.ArrayList;
 
-public class FavouritesActivity extends AppCompatActivity {
-    private static final String TAG = FavouritesActivity.class.getName();
-    private ArrayList<Event> mFavaouriteEvents;
-    private EventsAdapter mAdapter;
+public class FavouritesActivity extends AppCompatActivity
+        implements FavouriteView {
+
+    private FavouritePresenter mFavouritePresenter;
+
+    private FavouriteEventsAdapter mAdapter;
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
             if (Tag.ACTION_UPDATE_FAVOURITES.equals(action)) {
-                prepareFavouriteList();
-                mAdapter.setEvents(mFavaouriteEvents);
-                findViewById(R.id.no_favourite_events).setVisibility(mFavaouriteEvents.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+                mFavouritePresenter.prepareFavouriteEvents();
             }
 
         }
@@ -45,30 +44,18 @@ public class FavouritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites);
 
-        mFavaouriteEvents = new ArrayList<>();
-
+        mAdapter = new FavouriteEventsAdapter();
         setToolbar();
         setFavouriteEventsList();
-        prepareFavouriteList();
 
-        mAdapter.setEvents(mFavaouriteEvents);
-
-        findViewById(R.id.no_favourite_events).setVisibility(mFavaouriteEvents.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-    }
-
-    private void prepareFavouriteList() {
-        mFavaouriteEvents.clear();
-
-        for (Event e : Toppr.getInstance().events) {
-            if (e.hasLiked) {
-                mFavaouriteEvents.add(e);
-            }
-        }
+        mFavouritePresenter = new FavouritePresenter(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        mFavouritePresenter.prepareFavouriteEvents();
 
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(mReceiver, getIntentFilter());
@@ -103,8 +90,6 @@ public class FavouritesActivity extends AppCompatActivity {
     }
 
     private void setFavouriteEventsList() {
-        mAdapter = new EventsAdapter(true);
-
         RecyclerView eventsList = (RecyclerView) findViewById(R.id.favourite_events_list);
         eventsList.setLayoutManager(new LinearLayoutManager(this));
         eventsList.setAdapter(mAdapter);
@@ -112,7 +97,8 @@ public class FavouritesActivity extends AppCompatActivity {
         ItemClickSupport.addTo(eventsList).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                Log.i(TAG, "Item Clicked!");
+                Log.i(Tag.LOG, "Item Clicked!");
+                mFavouritePresenter.showEventDetails(position);
             }
         });
     }
@@ -122,5 +108,23 @@ public class FavouritesActivity extends AppCompatActivity {
         filter.addAction(Tag.ACTION_UPDATE_FAVOURITES);
 
         return filter;
+    }
+
+    @Override
+    public void showEventDetails(String id) {
+        Intent i = new Intent(FavouritesActivity.this, EventDetailActivity.class);
+        i.putExtra(Tag.ID, id);
+
+        startActivity(i);
+    }
+
+    @Override
+    public void setFavouriteStatus(boolean favouriteStatus) {
+        findViewById(R.id.no_favourite_events).setVisibility(favouriteStatus ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    @Override
+    public void showFavourites(ArrayList<Event> favouriteEvents) {
+        mAdapter.setEvents(favouriteEvents);
     }
 }

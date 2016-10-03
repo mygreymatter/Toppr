@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".StatisticActivity">
+    tools:context=".statistic.StatisticActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -37,7 +37,7 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
-            tools:context="com.mayo.toppr.StatisticActivity">
+            tools:context="com.mayo.toppr.statistic.StatisticActivity">
 
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/barchart"

@@ -19,6 +19,7 @@ public class Tag {
     public static final String EXPERIENCE = "experience";
     public static final String ACTION_UPDATE_FAVOURITES = "update_favourites";
     public static final String POSITION = "position";
+    public static final String HAS_SAVED = "has_saved";
 
     private Tag() {
 

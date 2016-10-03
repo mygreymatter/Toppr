@@ -1,4 +1,4 @@
-package com.mayo.toppr;
+package com.mayo.toppr.home;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,46 +11,44 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.volley.Response;
-import com.mayo.toppr.event.Event;
+import com.mayo.toppr.R;
+import com.mayo.toppr.Tag;
+import com.mayo.toppr.customview.ItemClickSupport;
 import com.mayo.toppr.event.EventDetailActivity;
 import com.mayo.toppr.event.EventsAdapter;
 import com.mayo.toppr.favourite.FavouritesActivity;
+import com.mayo.toppr.models.Event;
 import com.mayo.toppr.search.SearchActivity;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.mayo.toppr.statistic.StatisticActivity;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-
-    private static final String TAG = MainActivity.class.getName();
+        implements NavigationView.OnNavigationItemSelectedListener,
+        MainView {
 
     private EventsAdapter mAdapter;
     private ProgressBar mProgress;
     private TextView mProgressStatus;
-    private ArrayList<Event> mEvents;
+
+    private MainPresenter mainPresenter;
+    private boolean hasPaused;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mEvents = Toppr.getInstance().events;
+        mAdapter = new EventsAdapter();
 
         mProgress = (ProgressBar) findViewById(R.id.progressbar);
         mProgressStatus = (TextView) findViewById(R.id.progress_status);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -63,21 +61,33 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        mainPresenter = new MainPresenter(this);
+
+        if (savedInstanceState == null) {
+            mainPresenter.fetchEvents();
+        } else {
+            //to handle configuration changes
+            mainPresenter.retrieveEvents();
+        }
+
         setEventsList();
+    }
 
-        Toppr.getInstance().getJSONObject(URL.GET_EVENTS,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.i(TAG, "Response: " + response);
-                        try {
-                            parseResponse(response);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-                    }
-                });
+        if (hasPaused) {
+            hasPaused = false;
+            mainPresenter.retrieveEvents();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        hasPaused = true;
     }
 
     @Override
@@ -111,72 +121,69 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_favourite) {
-            startActivity(new Intent(this, FavouritesActivity.class));
-        } else if (id == R.id.nav_statistics) {
-            startActivity(new Intent(this, StatisticActivity.class));
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-//        item.setChecked(false);
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
 
+        switch (item.getItemId()) {
+            case R.id.nav_favourite:
+                mainPresenter.onFavouritesClicked();
+                break;
+            case R.id.nav_statistics:
+                mainPresenter.onStatisticsClicked();
+                break;
+            default:
+                break;
+        }
         //return false to keep the menu item in the navigation bar unselected
         return false;
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        mAdapter.setEvents(mEvents);
+    protected void onSaveInstanceState(Bundle savedInstance) {
+        //to handle configuration changes
+        savedInstance.putBoolean(Tag.HAS_SAVED, true);
+        super.onSaveInstanceState(savedInstance);
     }
 
-    private void parseResponse(JSONObject response) throws JSONException {
-        JSONArray websites = response.getJSONArray(Tag.WEBSITES);
-        JSONObject website;
-        Event event;
+    @Override
+    public void showProgress() {
+        mProgress.setVisibility(View.VISIBLE);
+        mProgressStatus.setVisibility(View.VISIBLE);
+    }
 
-        Toppr.getInstance().events.clear();
-        for (int index = 0; index < websites.length(); index++) {
-            website = websites.getJSONObject(index);
-            event = new Event();
-
-            event.id = website.getString(Tag.ID);
-            event.name = website.getString(Tag.NAME);
-            event.image = website.getString(Tag.IMAGE);
-            event.category = website.getString(Tag.CATEGORY);
-            event.description = website.getString(Tag.DESCRIPTION);
-            event.experience = website.getString(Tag.EXPERIENCE);
-
-            mEvents.add(event);
-        }
-
-        Log.i(TAG, "Events: " + Toppr.getInstance().events.size());
-
+    @Override
+    public void stopProgress() {
         mProgress.setVisibility(View.INVISIBLE);
         mProgressStatus.setVisibility(View.INVISIBLE);
-        mAdapter.setEvents(Toppr.getInstance().events);
+    }
+
+    @Override
+    public void showEventDetails(String id) {
+        Intent i = new Intent(MainActivity.this, EventDetailActivity.class);
+        i.putExtra(Tag.ID, id);
+
+        startActivity(i);
+    }
+
+    @Override
+    public void showFavourites() {
+        startActivity(new Intent(this, FavouritesActivity.class));
+    }
+
+    @Override
+    public void showStatistics() {
+        startActivity(new Intent(this, StatisticActivity.class));
+    }
+
+    @Override
+    public void showEventsList(ArrayList<Event> events) {
+        mAdapter.setEvents(events);
     }
 
     private void setEventsList() {
-        mAdapter = new EventsAdapter(false);
-
         RecyclerView eventsList = (RecyclerView) findViewById(R.id.events_list);
         eventsList.setLayoutManager(new LinearLayoutManager(this));
         eventsList.setAdapter(mAdapter);
@@ -184,11 +191,7 @@ public class MainActivity extends AppCompatActivity
         ItemClickSupport.addTo(eventsList).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                Log.i(TAG, "Item Clicked!");
-                Intent i = new Intent(MainActivity.this, EventDetailActivity.class);
-                i.putExtra(Tag.POSITION, position);
-
-                startActivity(i);
+                mainPresenter.onEventClicked(position);
             }
         });
     }

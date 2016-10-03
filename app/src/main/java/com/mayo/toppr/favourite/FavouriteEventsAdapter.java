@@ -1,6 +1,8 @@
-package com.mayo.toppr.event;
+package com.mayo.toppr.favourite;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mayo.toppr.R;
+import com.mayo.toppr.Tag;
 import com.mayo.toppr.models.Event;
 
 import java.util.ArrayList;
@@ -22,17 +25,12 @@ import java.util.ArrayList;
  * @version 1.0
  */
 
-public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventVH> {
-    private static final String TAG = EventsAdapter.class.getName();
+public class FavouriteEventsAdapter extends RecyclerView.Adapter<FavouriteEventsAdapter.EventVH> {
+    private static final String TAG = FavouriteEventsAdapter.class.getName();
 
     private ArrayList<Event> events;
     private Context context;
     private LayoutInflater inflater;
-//    private boolean isDisplayingFavourites;
-
-/*    public EventsAdapter(boolean isDisplayingFavourites) {
-        this.isDisplayingFavourites = isDisplayingFavourites;
-    }*/
 
     @Override
     public EventVH onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -63,6 +61,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventVH> {
                 Log.i(TAG, " Favourite clicked");
                 event.hasLiked = !event.hasLiked;
                 setFavouriteIcon(event, holder.favourite);
+
+                sendBroadcast();
             }
         });
     }
@@ -77,6 +77,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventVH> {
                     .load(R.drawable.ic_favourite_unselected)
                     .into(v);
         }
+    }
+
+    private void sendBroadcast() {
+        LocalBroadcastManager.getInstance(context)
+                .sendBroadcast(new Intent(Tag.ACTION_UPDATE_FAVOURITES));
     }
 
     @Override

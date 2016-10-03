@@ -15,46 +15,35 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.mayo.toppr.ItemClickSupport;
 import com.mayo.toppr.R;
 import com.mayo.toppr.Tag;
-import com.mayo.toppr.Toppr;
-import com.mayo.toppr.event.Event;
+import com.mayo.toppr.customview.ItemClickSupport;
+import com.mayo.toppr.models.Event;
 
 import java.util.ArrayList;
 
 public class SearchActivity extends AppCompatActivity
-        implements SearchView.OnQueryTextListener, SearchView.OnCloseListener {
+        implements SearchView.OnQueryTextListener, SearchView.OnCloseListener,
+        ISearchView {
 
-    private ArrayList<Event> mResults;
     private SearchAdapter mAdapter;
+    private SearchPresenter mSearchPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
-        mResults = new ArrayList<>();
+        mAdapter = new SearchAdapter();
 
         setToolbar();
         setResultsList();
+        mSearchPresenter = new SearchPresenter(this);
     }
 
-    private void setResultsList() {
-        mAdapter = new SearchAdapter();
-        mAdapter.setResults(mResults);
 
-        RecyclerView resultsList = (RecyclerView) findViewById(R.id.listView);
-        resultsList.setLayoutManager(new LinearLayoutManager(this));
-        resultsList.setAdapter(mAdapter);
-
-        ItemClickSupport.addTo(resultsList).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-
-            }
-        });
-
+    @Override
+    public void setResults(ArrayList<Event> results) {
+        mAdapter.setResults(results);
     }
 
     @Override
@@ -121,26 +110,21 @@ public class SearchActivity extends AppCompatActivity
     @Override
     public boolean onQueryTextChange(String text) {
         Log.i(Tag.LOG, "OnChange");
-
-        mResults.clear();
-
-        Event newEvent;
-        for (Event event : Toppr.getInstance().events) {
-            if (event.name.toLowerCase().contains(text.toLowerCase())) {
-                newEvent = new Event();
-                newEvent.id = event.id;
-                newEvent.category = event.category;
-                newEvent.description = event.description;
-                newEvent.name = event.name;
-                newEvent.image = event.image;
-                newEvent.hasLiked = event.hasLiked;
-
-                mResults.add(newEvent);
-            }
-        }
-
-        mAdapter.setResults(mResults);
-
+        mSearchPresenter.filterResults(text);
         return true;
+    }
+
+
+    private void setResultsList() {
+        RecyclerView resultsList = (RecyclerView) findViewById(R.id.listView);
+        resultsList.setLayoutManager(new LinearLayoutManager(this));
+        resultsList.setAdapter(mAdapter);
+
+        ItemClickSupport.addTo(resultsList).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+
+            }
+        });
     }
 }

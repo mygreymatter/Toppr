@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".StatisticActivity">
+    tools:context=".statistic.StatisticActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -33,7 +33,7 @@
             android:id="@+id/activity_statistic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="com.mayo.toppr.StatisticActivity">
+            tools:context="com.mayo.toppr.statistic.StatisticActivity">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/listView"
