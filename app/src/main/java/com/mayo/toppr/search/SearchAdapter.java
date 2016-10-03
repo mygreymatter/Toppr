@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.mayo.toppr.R;
 import com.mayo.toppr.Tag;
-import com.mayo.toppr.event.Event;
+import com.mayo.toppr.models.Event;
 
 import java.util.ArrayList;
 

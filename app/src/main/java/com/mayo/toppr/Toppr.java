@@ -9,9 +9,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.mayo.toppr.event.Event;
-
-import java.util.ArrayList;
 
 /**
  * Created by Mahayogi Lakshmipathi on 25/9/16.
@@ -23,7 +20,6 @@ import java.util.ArrayList;
 public class Toppr extends Application {
     private static final String TAG = Toppr.class.getName();
     private static Toppr instance = null;
-    public ArrayList<Event> events;
     private RequestQueue mRequestQueue;
 
     public static Toppr getInstance() {
@@ -36,7 +32,6 @@ public class Toppr extends Application {
 
         instance = this;
         mRequestQueue = Volley.newRequestQueue(this);
-        events = new ArrayList<>();
     }
 
     public void getJSONObject(String url, Response.Listener listener) {

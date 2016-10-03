@@ -1,15 +1,8 @@
-package com.mayo.toppr;
+package com.mayo.toppr.statistic;
 
-import android.app.SearchManager;
-import android.content.ComponentName;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.github.mikephil.charting.charts.PieChart;
@@ -17,12 +10,11 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.mayo.toppr.search.SearchActivity;
+import com.mayo.toppr.R;
 
 import java.util.ArrayList;
 
-public class StatisticActivity extends AppCompatActivity
-        implements SearchView.OnQueryTextListener {
+public class StatisticActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,35 +56,6 @@ public class StatisticActivity extends AppCompatActivity
         setToolbar();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_search_menu, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-        ComponentName componentName = new ComponentName(this, SearchActivity.class);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName));
-        searchView.setOnQueryTextListener(this);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i(Tag.LOG, "Search Clic");
-        switch (item.getItemId()) {
-            case R.id.search:
-                Log.i(Tag.LOG, "Search Clicked");
-                onSearchRequested();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-
-    }
-
 
     private void setToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -113,15 +76,4 @@ public class StatisticActivity extends AppCompatActivity
         });
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        Log.i(Tag.LOG, "onSubmit");
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        Log.i(Tag.LOG, "onChange : " + newText);
-        return true;
-    }
 }
